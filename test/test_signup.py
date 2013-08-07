@@ -13,3 +13,6 @@ class TestSignup(TestCase):
         users = session().query(User).all()
         eq_(len(users), 1)
         eq_(users[0].email, 'andrew@lorente.name')
+
+        self.visit('/')
+        self.browser.fill('email', 'andrew@lorente.name')

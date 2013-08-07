@@ -4,20 +4,44 @@ import os
 import subprocess
 import time
 import unittest
-from sqlalchemy import create_engine
+import threading
 import sqlalchemy.exc
+from sqlalchemy import create_engine
+from werkzeug.serving import make_server
+from splinter import Browser
+
 import db
 from db import session
+from web import app
+
+
+db_info = {}
+web_actors = {}
 
 
 class TestCase(unittest.TestCase):
     def setUp(self):
         session().commit = session().flush
+        self.browser = web_actors['browser']
 
     def tearDown(self):
         session().rollback()
 
-db_info = {}
+    def visit(self, path):
+        self.browser.visit('http://localhost:65432' + path)
+
+
+class Server(object):
+    def __init__(self):
+        self.app = app
+
+    def start(self):
+        self.server = make_server('0.0.0.0', 65432, self.app)
+        self.server.serve_forever()
+
+    def stop(self):
+        if hasattr(self, 'server'):
+            self.server.shutdown()
 
 
 def setUpPackage():
@@ -28,8 +52,18 @@ def setUpPackage():
 
     apply_migrations(temp_db_url)
 
+    server = Server()
+    thread = threading.Thread(target=server.start)
+    thread.daemon = True
+    thread.start()
+    web_actors['server'] = server
+
+    web_actors['browser'] = Browser()
+
 
 def tearDownPackage():
+    web_actors['server'].stop()
+    web_actors['browser'].quit()
     terminate_query = """
         select pg_terminate_backend({0})
         from pg_stat_activity
