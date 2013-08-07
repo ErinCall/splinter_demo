@@ -1,0 +1,4 @@
+Flask==0.9
+psycopg2==2.4.6
+sqlalchemy==0.8
+yoyo-migrations==4.1.6
