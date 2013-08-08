@@ -8,6 +8,8 @@ import threading
 import sqlalchemy.exc
 from sqlalchemy import create_engine
 from werkzeug.serving import make_server
+from splinter.driver.webdriver.firefox import WebDriver
+from splinter.browser import _DRIVERS
 from splinter import Browser
 
 import db
@@ -62,8 +64,8 @@ def setUpPackage():
 
 
 def tearDownPackage():
-    web_actors['server'].stop()
     web_actors['browser'].quit()
+    web_actors['server'].stop()
     terminate_query = """
         select pg_terminate_backend({0})
         from pg_stat_activity
@@ -102,3 +104,10 @@ def drop_temp_database():
     conn = db_info['master_engine'].connect()
     conn.execute('commit')
     conn.execute('drop database {0}'.format(db_info['temp_db_name']))
+
+
+class FastFirefoxDriver(WebDriver):
+    def visit(self, url):
+        self.driver.get(url)
+
+_DRIVERS['firefox'] = FastFirefoxDriver
