@@ -10,9 +10,13 @@ class TestSignup(TestCase):
     def test_sign_up(self):
         app.test_client().post('/', data={'email': 'andrew@lorente.name'})
 
-        users = session().query(User).all()
-        eq_(len(users), 1)
-        eq_(users[0].email, 'andrew@lorente.name')
+        users = session().query(User.email).all()
+        eq_(users, [('andrew@lorente.name',)])
 
         self.visit('/')
-        self.browser.fill('email', 'andrew@lorente.name')
+        self.browser.fill('email', 'joe@lewis.name')
+        self.browser.find_by_name('go').click()
+        assert self.browser.is_text_present('Thanks'), 'rude!'
+
+        users = session().query(User.email).all()
+        eq_(users, [('andrew@lorente.name',), ('joe@lewis.name',)])

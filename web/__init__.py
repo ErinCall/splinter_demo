@@ -6,6 +6,12 @@ from db import User, session
 app = Flask(__name__)
 
 
+@app.after_request
+def after_request(response):
+    session().commit()
+    return response
+
+
 @app.route('/')
 def index():
     return render_template('index.html.jinja')
@@ -15,5 +21,4 @@ def index():
 def signup():
     user = User(email=request.form['email'])
     session().add(user)
-    session().commit()
     return render_template("signed_up.html.jinja")
