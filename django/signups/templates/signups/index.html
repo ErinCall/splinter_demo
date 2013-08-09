@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+    <title>Sign Up to receive announcements!</title>
+</head>
+<body>
+    <div>
+        <h1>Sign up to receive announcements!</h1>
+        <form action="" method="post">
+        	<label for="email">Email:</label>
+            <input type="text" id="email" name="email">
+            <input type="submit" value="That's my email address!" name="go">
+            {% csrf_token %}
+            <span></span>
+        </form>
+    </div>
+</body>
