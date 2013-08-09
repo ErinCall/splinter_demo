@@ -8,8 +8,11 @@
         <h1>Sign up to receive announcements!</h1>
         <form action="" method="post">
         	<label for="email">Email:</label>
-            <input type="text" name="email">
+            <input type="text" id="email" name="email">
             <input type="submit" value="That's my email address!" name="go">
+            <span></span>
         </form>
     </div>
+    <script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/validate.js')}}"></script>
 </body>

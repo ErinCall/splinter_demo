@@ -20,3 +20,15 @@ class TestSignup(TestCase):
 
         users = session().query(User.email).all()
         eq_(users, [('andrew@lorente.name',), ('joe@lewis.name',)])
+
+    def test_valid_emails_get_validated(self):
+        print 'here before visit'
+        self.visit('/')
+        print 'here after visit'
+        self.browser.fill('email', 'eric@holscher.name')
+        assert self.browser.is_text_present('valid'), "didn't get validated"
+
+    def test_invalid_emails_get_yelled_about(self):
+        self.visit('/')
+        self.browser.fill('email', 'aghlaghlaghl')
+        assert self.browser.is_text_present('invalid'), "didn't get yelled at"
