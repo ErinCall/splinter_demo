@@ -148,3 +148,5 @@ LOGGING = {
         },
     }
 }
+
+TEST_RUNNER = 'splinter_demo.test_runner.TestSuiteRunner'
