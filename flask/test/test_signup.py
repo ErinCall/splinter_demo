@@ -22,9 +22,7 @@ class TestSignup(TestCase):
         eq_(users, [('andrew@lorente.name',), ('joe@lewis.name',)])
 
     def test_valid_emails_get_validated(self):
-        print 'here before visit'
         self.visit('/')
-        print 'here after visit'
         self.browser.fill('email', 'eric@holscher.name')
         assert self.browser.is_text_present('valid'), "didn't get validated"
 
