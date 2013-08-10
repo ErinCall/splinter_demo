@@ -33,19 +33,6 @@ class TestCase(unittest.TestCase):
         self.browser.visit('http://localhost:65432' + path)
 
 
-class Server(object):
-    def __init__(self):
-        self.app = app
-
-    def start(self):
-        self.server = make_server('0.0.0.0', 65432, self.app)
-        self.server.serve_forever()
-
-    def stop(self):
-        if hasattr(self, 'server'):
-            self.server.shutdown()
-
-
 def setUpPackage():
     create_temp_database()
     temp_db_url = 'postgresql://localhost/{0}'.format(db_info['temp_db_name'])
@@ -54,8 +41,8 @@ def setUpPackage():
 
     apply_migrations(temp_db_url)
 
-    server = Server()
-    thread = threading.Thread(target=server.start)
+    server = make_server('0.0.0.0', 65432, app)
+    thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
     web_actors['server'] = server
@@ -65,7 +52,6 @@ def setUpPackage():
 
 def tearDownPackage():
     web_actors['browser'].quit()
-    web_actors['server'].stop()
     terminate_query = """
         select pg_terminate_backend({0})
         from pg_stat_activity
