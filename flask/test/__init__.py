@@ -9,8 +9,6 @@ import sqlalchemy.exc
 from sqlalchemy import create_engine
 from werkzeug.serving import make_server
 from splinter.driver.webdriver.firefox import WebDriver
-from splinter.browser import _DRIVERS
-from splinter import Browser
 
 import db
 from db import session
@@ -47,7 +45,7 @@ def setUpPackage():
     thread.start()
     web_actors['server'] = server
 
-    web_actors['browser'] = Browser()
+    web_actors['browser'] = SingleVisitFirefoxDriver()
 
 
 def tearDownPackage():
@@ -92,8 +90,6 @@ def drop_temp_database():
     conn.execute('drop database {0}'.format(db_info['temp_db_name']))
 
 
-class FastFirefoxDriver(WebDriver):
+class SingleVisitFirefoxDriver(WebDriver):
     def visit(self, url):
         self.driver.get(url)
-
-_DRIVERS['firefox'] = FastFirefoxDriver

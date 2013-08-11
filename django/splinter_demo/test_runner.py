@@ -5,9 +5,7 @@ from django.test.simple import DjangoTestSuiteRunner
 from django.core.servers.basehttp import run, get_internal_wsgi_application
 from django.contrib.staticfiles.handlers import StaticFilesHandler
 from splinter.driver.webdriver.firefox import WebDriver
-from splinter.browser import _DRIVERS
 from mock import patch
-from splinter import Browser
 
 
 BROWSER = None
@@ -27,15 +25,13 @@ class TestSuiteRunner(DjangoTestSuiteRunner):
         thread.start()
 
         global BROWSER
-        BROWSER = Browser()
+        BROWSER = SingleVisitFirefoxDriver()
 
     def teardown_test_environment(self, **kwargs):
         BROWSER.quit()
         super(TestSuiteRunner, self).setup_test_environment(**kwargs)
 
 
-class FastFirefoxDriver(WebDriver):
+class SingleVisitFirefoxDriver(WebDriver):
     def visit(self, url):
         self.driver.get(url)
-
-_DRIVERS['firefox'] = FastFirefoxDriver
