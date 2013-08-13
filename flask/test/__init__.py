@@ -33,11 +33,7 @@ class TestCase(unittest.TestCase):
 
 def setUpPackage():
     create_temp_database()
-    temp_db_url = 'postgresql://localhost/{0}'.format(db_info['temp_db_name'])
-    db_info['engine'] = create_engine(temp_db_url)
-    db.ENGINE = db_info['engine']
-
-    apply_migrations(temp_db_url)
+    apply_migrations()
 
     server = make_server('0.0.0.0', 65432, app)
     thread = threading.Thread(target=server.serve_forever)
@@ -74,14 +70,21 @@ def create_temp_database():
     conn = db_info['master_engine'].connect()
     conn.execute('commit')  # work around sqlalchemy's auto-transactions
     conn.execute('create database {0}'.format(db_info['temp_db_name']))
+    db_info['temp_db_url'] = 'postgresql://localhost/{0}'.format(
+        db_info['temp_db_name'])
+    db_info['engine'] = create_engine(db_info['temp_db_url'])
+    db.ENGINE = db_info['engine']
 
 
-def apply_migrations(temp_db_url):
+def apply_migrations():
     migrations_dir = os.path.join(os.path.dirname(__file__),
                                   '..',
                                   'migrations')
-    subprocess.check_output(
-        ['yoyo-migrate', '-b', 'apply', migrations_dir, temp_db_url])
+    subprocess.check_output(['yoyo-migrate',
+                             '-b',
+                             'apply',
+                             migrations_dir,
+                             db_info['temp_db_url']])
 
 
 def drop_temp_database():
