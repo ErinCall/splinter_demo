@@ -1,1 +1,14 @@
-A demo webapp in flask that uses splinter for acceptance testing.
+A demo webapp in django and flask that uses splinter for acceptance testing.
+
+To run the flask tests:
+You will need a postgres server running on localhost
+$ cd flask
+$ pip install -r requirements.txt
+$ nosetests
+
+To run the django tests:
+You will need a postgres server running on localhost, and you will need to have created a database called splinter_demo
+$ cd django
+$ pip install -r requirements.txt
+$ DATABASE_URL=postgresql://localhost/splinter_demo python manage.py syncdb
+$ DATABASE_URL=postgresql://localhost/splinter_demo python manage.py test
